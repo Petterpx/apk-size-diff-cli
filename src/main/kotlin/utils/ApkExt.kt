@@ -1,10 +1,9 @@
 package utils
 
-import bean.ApkFileType
-import bean.ApkFormatInfo
+import model.ApkFileType
+import model.IApkFormatInfo
+import model.Size
 import java.io.File
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.util.zip.ZipEntry
 
 
@@ -21,16 +20,6 @@ fun ZipEntry.fileType(): ApkFileType {
     }
 }
 
-fun Long.toKB(): String {
-    var megaBytes = this.toDouble() / 1024
-    var unit = " KB"
-    if (megaBytes > 1000 || (megaBytes < 0 && megaBytes < -1000)) {
-        megaBytes /= 1024
-        unit = " M"
-    }
-    return "${BigDecimal(megaBytes).setScale(2, RoundingMode.HALF_UP).toDouble()} $unit"
-}
-
 fun File.createFileIfNoExists() {
     if (exists()) return
     if (!parentFile.exists()) {
@@ -39,11 +28,11 @@ fun File.createFileIfNoExists() {
     createNewFile()
 }
 
-fun MutableMap<ApkFileType, ApkFormatInfo>.diff(curMap: MutableMap<ApkFileType, ApkFormatInfo>): Map<ApkFileType, Long> {
-    val map = mutableMapOf<ApkFileType, Long>()
+fun MutableMap<ApkFileType, IApkFormatInfo>.diff(curMap: MutableMap<ApkFileType, IApkFormatInfo>): Map<ApkFileType, Size> {
+    val map = mutableMapOf<ApkFileType, Size>()
     keys.forEach {
-        val base = this[it]?.size() ?: 0L
-        val target = curMap[it]?.size() ?: 0L
+        val base = this[it]?.size ?: Size(0)
+        val target = curMap[it]?.size ?: Size(0)
         map[it] = target - base
     }
     return map

@@ -1,4 +1,4 @@
-package bean
+package model
 
 enum class ApkFileType(val title: String) {
     APK("Apk"),
@@ -11,3 +11,10 @@ enum class ApkFileType(val title: String) {
     META_INF("META_INF"),
     OTHER("Other")
 }
+
+data class ApkFile(
+    val name: String,
+    val path: ApkFileType,
+    val size: Size,
+    val compressSize: Size
+)

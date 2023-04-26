@@ -1,6 +1,10 @@
 package utils
 
 
+/**
+ * MdUtils
+ * @author Petterp
+ * */
 fun StringBuilder.mdHeader(level: Int = 1, text: String) {
     val prefix = "#".repeat(level)
     append("$prefix $text\n\n")

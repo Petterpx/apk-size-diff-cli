@@ -1,6 +1,7 @@
-import bean.ApkFile
-import bean.ApkFileType
-import bean.ApkFormatInfo
+import model.ApkFile
+import model.ApkFileType
+import model.IApkFormatInfo
+import model.Size
 import utils.*
 import java.io.File
 import java.nio.file.Path
@@ -20,8 +21,8 @@ class ApkExtractor private constructor() {
     }
 
     private fun outPutMd(
-        baseMap: MutableMap<ApkFileType, ApkFormatInfo>,
-        outMap: MutableMap<ApkFileType, ApkFormatInfo>,
+        baseMap: MutableMap<ApkFileType, IApkFormatInfo>,
+        outMap: MutableMap<ApkFileType, IApkFormatInfo>,
     ) {
         val diffMap = baseMap.diff(outMap)
         var path = diffOutputPath.pathString
@@ -52,30 +53,30 @@ class ApkExtractor private constructor() {
 
     private fun addMdList(
         fileType: ApkFileType,
-        baseMap: Map<ApkFileType, ApkFormatInfo>,
-        outMap: Map<ApkFileType, ApkFormatInfo>,
-        diffMap: Map<ApkFileType, Long>,
+        baseMap: Map<ApkFileType, IApkFormatInfo>,
+        outMap: Map<ApkFileType, IApkFormatInfo>,
+        diffMap: Map<ApkFileType, Size>,
     ) = listOf(
         "${fileType.title} Size",
-        "${baseMap[fileType]?.size()?.toKB()}",
-        "${outMap[fileType]?.size()?.toKB()}",
-        "${diffMap[fileType]?.toKB()}",
+        "${baseMap[fileType]?.size?.kb}",
+        "${outMap[fileType]?.size?.kb}",
+        "${diffMap[fileType]?.kb}",
     )
 
-    private fun analysis(path: Path): MutableMap<ApkFileType, ApkFormatInfo> {
-        val map = mutableMapOf<ApkFileType, ApkFormatInfo>()
+    private fun analysis(path: Path): MutableMap<ApkFileType, IApkFormatInfo> {
+        val map = mutableMapOf<ApkFileType, IApkFormatInfo>()
         val file = path.toFile()
         val zipFile = ZipFile(file)
         var apkSize = 0L
         zipFile.stream().forEach { entry ->
             val fileType = entry.fileType()
             apkSize += entry.compressedSize
-            val apkFile = ApkFile(entry.name, fileType, entry.size, entry.compressedSize)
-            val apkFormatInfo = map.getOrDefault(fileType, ApkFormatInfo.Basic(0, mutableListOf()))
+            val apkFile = ApkFile(entry.name, fileType, Size(entry.size), Size(entry.compressedSize))
+            val apkFormatInfo = map.getOrDefault(fileType, IApkFormatInfo.Basic(mutableListOf(), Size(0), Size(0)))
             apkFormatInfo.addFile(apkFile)
             map[fileType] = apkFormatInfo
         }
-        map[ApkFileType.APK] = ApkFormatInfo.Apk(file.name, apkSize)
+        map[ApkFileType.APK] = IApkFormatInfo.Apk(file.name, Size(apkSize))
         return map
     }
 
