@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ApkChecker">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/libs/ApkChecker.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
