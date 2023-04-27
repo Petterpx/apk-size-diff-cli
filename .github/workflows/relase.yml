@@ -1,0 +1,37 @@
+name: Android CI
+
+on:
+  release:
+    types: [ published ]
+
+permissions: write-all
+
+jobs:
+
+  build_assemble:
+    runs-on: ubuntu-latest
+    env:
+      OUTPUT_DIR: build/libs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+      # https://github.com/burrunan/gradle-cache-action
+      - uses: burrunan/gradle-cache-action@v1
+        name: Cache gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build jar
+        run: ./gradlew jar
+
+      - uses: AButler/upload-release-assets@v2.0
+        with:
+          files: ${{ format('{0}.jar', env.OUTPUT_DIR) }}
+          repo-token: ${{ github.token }}
+          release-tag: ${{ github.event.release.tag_name}}
