@@ -79,4 +79,6 @@ java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/
     path: ${{ env.APK_DIFF_OUTPUT_PATH }}/apk_size_diff.md
 ```
 
-![image-20230427230941835](https://img.tucang.cc/api/image/show/fb17dd3ba1f0fb84d3d2779cc0b60086)
+![image-20230427231213976](https://img.tucang.cc/api/image/show/74bc6946e441f87f4b34cef76b399289)
+
+[](https://img.tucang.cc/api/image/show/74bc6946e441f87f4b34cef76b399289)
