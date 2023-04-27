@@ -1,4 +1,4 @@
-name: Android CI
+name: Cli Release
 
 on:
   release:

@@ -1,4 +1,4 @@
-name: Android CI
+name: Cli CI
 
 on:
   pull_request:
