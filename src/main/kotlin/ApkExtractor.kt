@@ -1,3 +1,4 @@
+import com.github.ajalt.clikt.output.TermUi.echo
 import model.*
 import result.ResultHelper
 import utils.*
@@ -33,7 +34,7 @@ class ApkExtractor private constructor() {
             apkFormatInfo.addFile(apkFile)
             map[fileType] = apkFormatInfo
         }
-        map[ApkFileType.APK] = IApkFormatInfo.Apk(file.name, Size(apkSize))
+        map[ApkFileType.APK] = IApkFormatInfo.Apk(file.name, Size(file.length()), Size(apkSize))
         return map
     }
 

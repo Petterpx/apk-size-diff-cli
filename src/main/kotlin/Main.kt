@@ -31,8 +31,10 @@ class Main : CliktCommand(help = "This is Apk Size Diff Utils") {
             echo("Baseline Apk  and Current Apk  can't be the same")
             return
         }
+        echo("apk-size-diff-cli---->start")
         if (diffOutputPath.notExists()) diffOutputPath.toFile().mkdirs()
         ApkExtractor.init(baselineApkPath, currentApkPath, diffOutputPath).extract()
+        echo("apk-size-diff-cli---->end")
     }
 }
 

@@ -4,7 +4,6 @@ plugins {
 }
 
 group = 'io.petterp.apk'
-version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()

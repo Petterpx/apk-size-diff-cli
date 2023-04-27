@@ -1,5 +1,7 @@
 package utils
 
+import java.awt.Color
+
 
 /**
  * MdUtils
@@ -8,6 +10,23 @@ package utils
 fun StringBuilder.mdHeader(level: Int = 1, text: String) {
     val prefix = "#".repeat(level)
     append("$prefix $text\n\n")
+}
+
+fun String.addText(color: Color, isBold: Boolean = false): String {
+    val colorRe = when (color) {
+        Color.RED -> "red"
+        Color.BLACK -> "black"
+        Color.BLUE -> "blue"
+        Color.GREEN -> "green"
+        Color.WHITE -> "white"
+        else -> ""
+    }
+    var temp = this
+    if (isBold) temp = "**$temp**"
+    if (colorRe.isNotEmpty()) {
+        return "<font color=red>$temp</font>"
+    }
+    return temp
 }
 
 fun StringBuilder.mdParagraph(text: String) {

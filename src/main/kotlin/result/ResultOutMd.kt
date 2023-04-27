@@ -5,7 +5,6 @@ import model.IApkFormatInfo
 import model.Size
 import utils.createFileIfNoExists
 import utils.diff
-import utils.mdHeader
 import utils.mdTable
 import java.io.File
 import kotlin.io.path.isDirectory
@@ -27,7 +26,6 @@ class ResultOutMd : ResultHelper() {
         file.createFileIfNoExists()
         file.outputStream().use {
             val builder = StringBuilder()
-            builder.mdHeader(1, "Apk Size Diff")
             builder.mdTable(
                 listOf(
                     "Metric",
@@ -44,6 +42,9 @@ class ResultOutMd : ResultHelper() {
             )
             it.write(builder.toString().toByteArray())
         }
+        if (diffMap[ApkFileType.APK]?.beyondSize(10024) == true) {
+            error("已超出边界")
+        }
     }
 
     private fun addMdList(
@@ -53,8 +54,8 @@ class ResultOutMd : ResultHelper() {
         diffMap: Map<ApkFileType, Size>,
     ) = listOf(
         "${fileType.title} Size",
-        "${baseMap[fileType]?.size?.unit}",
-        "${outMap[fileType]?.size?.unit}",
-        "${diffMap[fileType]?.unit}",
+        "${baseMap[fileType]?.size?.unit ?: 0}",
+        "${outMap[fileType]?.size?.unit ?: 0}",
+        "${diffMap[fileType]?.unit ?: 0}",
     )
 }

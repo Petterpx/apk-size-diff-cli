@@ -23,13 +23,15 @@ value class Size(private val size: Long = 0L) {
 
     operator fun minus(other: Size): Size = Size(this.size - other.size)
 
+    fun beyondSize(size: Long) = this.size > size
+
 }
 
 
 sealed interface IApkFormatInfo {
     var size: Size
 
-    data class Apk(val name: String, override var size: Size) : IApkFormatInfo
+    data class Apk(val name: String, override var size: Size, val compressSize: Size) : IApkFormatInfo
     data class Basic(val child: MutableList<ApkFile>, override var size: Size, var compressSize: Size) : IApkFormatInfo
 
     fun addFile(file: ApkFile) {
