@@ -1,13 +1,16 @@
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.prompt
-import com.github.ajalt.clikt.parameters.options.versionOption
+import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.types.int
+import com.github.ajalt.clikt.parameters.types.long
 import com.github.ajalt.clikt.parameters.types.path
+import model.ApkFileType
+import model.Size
 import java.nio.file.Path
 import kotlin.io.path.notExists
 
 class Main : CliktCommand(help = "This is Apk Size Diff Utils") {
+
+    private val pattern = Regex("^\\w+:\\d+$")
 
     init {
         versionOption("1.0")
@@ -25,6 +28,25 @@ class Main : CliktCommand(help = "This is Apk Size Diff Utils") {
         .path(mustExist = false, canBeDir = true, canBeFile = false)
         .prompt("You need to enter the diff output path to continue")
 
+    private val threshold by option(
+        "--threshold",
+        "-t",
+        help = "Apk threshold. Input example: apk:102400"
+    ).multiple().check("Input Error. Check your input format is xx:Number, for example: apk:10000.") { it ->
+        it.all {
+            pattern.matches(it)
+        }
+    }
+
+    private val thresholds by option(
+        "--thresholds",
+        "-ts",
+        help = "Apk threshold. Input example: apk:102400,res:102400"
+    ).check("Input Error. Check your input format is xx:Number, for example: apk:10000,res:102400") { it ->
+        pattern.matches(it) || it.split(",").any {
+            pattern.matches(it)
+        }
+    }
 
     override fun run() {
         if (baselineApkPath == currentApkPath) {
@@ -32,9 +54,38 @@ class Main : CliktCommand(help = "This is Apk Size Diff Utils") {
             return
         }
         echo("apk-size-diff-cli---->start")
+        val thresholdMap = createThresholdConfig()
         if (diffOutputPath.notExists()) diffOutputPath.toFile().mkdirs()
-        ApkExtractor.init(baselineApkPath, currentApkPath, diffOutputPath).extract()
+        ApkExtractor.init(baselineApkPath, currentApkPath, diffOutputPath, thresholdMap).extract()
         echo("apk-size-diff-cli---->end")
+    }
+
+    private fun createThresholdConfig(): Map<ApkFileType, Size> {
+        val thresholdMap = mutableMapOf<ApkFileType, Size>()
+        val thresholdList = mutableListOf<String>()
+        thresholds?.apply {
+            if (pattern.matches(this)) thresholdList.add(this)
+            else thresholdList.addAll(this.split(","))
+        }
+        thresholdList.addAll(threshold)
+        thresholdList.forEach {
+            val item = it.split(":")
+            val key = item[0]
+            val value = item[1].toLong()
+            val fileType = when {
+                ApkFileType.APK.name.contains(key, true) -> ApkFileType.APK
+                ApkFileType.DEX.name.contains(key, true) -> ApkFileType.DEX
+                ApkFileType.ARSC.name.contains(key, true) -> ApkFileType.ARSC
+                ApkFileType.MANIFEST.name.contains(key, true) -> ApkFileType.MANIFEST
+                ApkFileType.LIB.name.contains(key, true) -> ApkFileType.LIB
+                ApkFileType.RES.name.contains(key, true) -> ApkFileType.RES
+                ApkFileType.ASSETS.name.contains(key, true) -> ApkFileType.ASSETS
+                ApkFileType.META_INF.name.contains(key, true) -> ApkFileType.META_INF
+                else -> ApkFileType.OTHER
+            }
+            thresholdMap[fileType] = Size(value)
+        }
+        return thresholdMap
     }
 }
 

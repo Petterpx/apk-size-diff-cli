@@ -19,12 +19,13 @@ fun ZipEntry.fileType(): ApkFileType {
     }
 }
 
-fun File.createFileIfNoExists() {
-    if (exists()) return
+fun File.createFileIfNoExists(): File {
+    if (exists()) return this
     if (!parentFile.exists()) {
         parentFile.mkdirs()
     }
     createNewFile()
+    return this
 }
 
 fun MutableMap<ApkFileType, IApkFormatInfo>.diff(curMap: MutableMap<ApkFileType, IApkFormatInfo>): Map<ApkFileType, Size> {

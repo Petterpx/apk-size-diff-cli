@@ -1,21 +1,19 @@
 package result
 
-import model.ApkFileType
-import model.IApkFormatInfo
-import java.nio.file.Path
+import model.ApkResult
 
 /**
  * Apk Result Out Helper
  * @author petterp
  */
 abstract class ResultHelper {
-    lateinit var baseMap: MutableMap<ApkFileType, IApkFormatInfo>
-    lateinit var curMap: MutableMap<ApkFileType, IApkFormatInfo>
-    lateinit var diffOutPath: Path
+    protected lateinit var result: ApkResult
 
     abstract fun start()
 
     companion object {
-        fun outPutMd(init: ResultHelper.() -> Unit) = ResultOutMd().apply(init)
+        fun outPutMd(result: ApkResult) = ResultOutMd().apply {
+            this.result = result
+        }
     }
 }

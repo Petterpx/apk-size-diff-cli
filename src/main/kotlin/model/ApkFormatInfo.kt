@@ -4,7 +4,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 const val K = 1024L
-const val KK = K * K
+const val M = K * K
 const val DECIMAL = 2
 
 @JvmInline
@@ -12,10 +12,10 @@ value class Size(private val size: Long = 0L) {
     val kb: String
         get() = "${BigDecimal(size.toDouble() / K).setScale(DECIMAL, RoundingMode.HALF_UP).toDouble()} KB"
     val mb: String
-        get() = "${BigDecimal(size.toDouble() / KK).setScale(DECIMAL, RoundingMode.HALF_UP).toDouble()} MB"
+        get() = "${BigDecimal(size.toDouble() / M).setScale(DECIMAL, RoundingMode.HALF_UP).toDouble()} MB"
     val unit: String
         get() {
-            return if (size > KK || size < -KK) mb
+            return if (size > M || size < -M) mb
             else kb
         }
 
@@ -23,7 +23,15 @@ value class Size(private val size: Long = 0L) {
 
     operator fun minus(other: Size): Size = Size(this.size - other.size)
 
-    fun beyondSize(size: Long) = this.size > size
+    fun beyondSize(base: Size?): ResultDiffEnum {
+        if (this.size < 0) return ResultDiffEnum.Decrease
+        if (base == null) return ResultDiffEnum.Keep
+        return if (this.size > base.size) {
+            ResultDiffEnum.Deterioration
+        } else {
+            ResultDiffEnum.Keep
+        }
+    }
 
 }
 

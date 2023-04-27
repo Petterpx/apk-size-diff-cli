@@ -12,7 +12,7 @@ fun StringBuilder.mdHeader(level: Int = 1, text: String) {
     append("$prefix $text\n\n")
 }
 
-fun String.addText(color: Color, isBold: Boolean = false): String {
+fun String.addText(color: Color? = null, isBold: Boolean = false): String {
     val colorRe = when (color) {
         Color.RED -> "red"
         Color.BLACK -> "black"
@@ -24,7 +24,7 @@ fun String.addText(color: Color, isBold: Boolean = false): String {
     var temp = this
     if (isBold) temp = "**$temp**"
     if (colorRe.isNotEmpty()) {
-        return "<font color=red>$temp</font>"
+        return "<font color=$colorRe>$temp</font>"
     }
     return temp
 }
@@ -48,6 +48,10 @@ fun StringBuilder.mdCodeBlock(text: String, language: String? = null) {
 fun StringBuilder.mdUnorderedList(vararg items: String) {
     items.forEach { append("* $it\n") }
     append("\n")
+}
+
+fun StringBuilder.mdReference(text: String) {
+    append("> $text")
 }
 
 fun StringBuilder.mdOrderedList(vararg items: String) {
