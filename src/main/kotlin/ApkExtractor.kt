@@ -12,12 +12,18 @@ class ApkExtractor private constructor() {
     lateinit var threshold: Map<ApkFileType, Size>
 
     fun extract() {
+        val result = createApkResult()
+        ResultHelper.outPutMd(result).start()
+        //..more
+        if (result.isBeyondThreshold) error("本次扫描未通过，包大小已超出限定阈值，请检查你的改动代码。")
+    }
+
+    private fun createApkResult(): ApkResult {
         val baseMap = analysis(baselineApkPath)
         val curMap = analysis(currentApkPath)
         val diffMap = baseMap.diff(curMap)
-        val result = ApkResult(baseMap, curMap, diffMap, threshold, diffOutputPath)
-        ResultHelper.outPutMd(result).start()
-        //...more
+        val isBy = diffMap[ApkFileType.APK]?.beyondSize(threshold[ApkFileType.APK]) == ResultDiffEnum.Deterioration
+        return ApkResult(baseMap, curMap, diffMap, threshold, diffOutputPath, isBy)
     }
 
     private fun analysis(path: Path): MutableMap<ApkFileType, IApkFormatInfo> {

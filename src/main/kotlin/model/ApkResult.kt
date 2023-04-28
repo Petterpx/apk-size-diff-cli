@@ -3,9 +3,10 @@ package model
 import java.nio.file.Path
 
 data class ApkResult(
-    var baseMap: Map<ApkFileType, IApkFormatInfo>,
-    var curMap: Map<ApkFileType, IApkFormatInfo>,
-    var diffMap: Map<ApkFileType, Size>,
-    var threshold: Map<ApkFileType, Size>,
-    var diffOutPath: Path
+    val baseMap: Map<ApkFileType, IApkFormatInfo>,
+    val curMap: Map<ApkFileType, IApkFormatInfo>,
+    val diffMap: Map<ApkFileType, Size>,
+    val threshold: Map<ApkFileType, Size>,
+    val diffOutPath: Path,
+    var isBeyondThreshold: Boolean = false
 )

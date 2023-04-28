@@ -16,15 +16,12 @@ import kotlin.io.path.pathString
  */
 class ResultOutMd : ResultHelper() {
 
-    var errorSum = 0
     override fun start() {
         val diffOutPath = result.diffOutPath
         var path = diffOutPath.pathString
         if (diffOutPath.isDirectory()) {
             path += "/apk_size_diff.md"
         }
-        val isError =
-            result.diffMap[ApkFileType.APK]?.beyondSize(result.threshold[ApkFileType.APK]) == ResultDiffEnum.Deterioration
         File(path).createFileIfNoExists().outputStream().use {
             val builder = StringBuilder()
             builder.mdHeader(4, "Apk Size Diff Analysis 🧩")
@@ -42,10 +39,9 @@ class ResultOutMd : ResultHelper() {
                 addMdList(ApkFileType.ARSC),
                 addMdList(ApkFileType.OTHER),
             )
-            if (isError) builder.mdReference("本次扫描未通过，包大小超出限定阈值，请检查你的改动代码。")
+            if (result.isBeyondThreshold) builder.mdReference("本次扫描未通过，包大小超出限定阈值，请检查你的改动代码。")
             it.write(builder.toString().toByteArray())
         }
-        if (isError) error("本次扫描未通过，本次包大小超出限定阈值，请检查你的改动代码。")
     }
 
     private fun addMdList(fileType: ApkFileType): List<String> {
