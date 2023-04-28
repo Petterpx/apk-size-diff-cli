@@ -15,7 +15,7 @@ class Main() : CliktCommand(help = "This is Apk Size Diff Utils") {
     private val pattern = Regex("^\\w+:\\d+$")
 
     init {
-        versionOption("1.0")
+        versionOption("1.1")
     }
 
     private val baselineApkPath: Path by option(
