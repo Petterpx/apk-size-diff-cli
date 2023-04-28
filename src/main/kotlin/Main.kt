@@ -64,7 +64,7 @@ class Main() : CliktCommand(help = "This is Apk Size Diff Utils") {
         }
         val thresholdMap = createThresholdConfig()
         if (diffOutputPath.notExists()) diffOutputPath.toFile().mkdirs()
-        ApkExtractor.init(currentApkPath, baselineApkPath, diffOutputPath, thresholdMap).extract()
+        ApkExtractor.init(baselineApkPath, currentApkPath, diffOutputPath, thresholdMap).extract()
         echo("apk_size_diff -> success")
     }
 
