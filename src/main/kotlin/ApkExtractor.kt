@@ -22,8 +22,11 @@ class ApkExtractor private constructor() {
         val baseMap = analysis(baselineApkPath)
         val curMap = analysis(currentApkPath)
         val diffMap = baseMap.diff(curMap)
-        val isBy = diffMap[ApkFileType.APK]?.beyondSize(threshold[ApkFileType.APK]) == ResultDiffEnum.Deterioration
-        return ApkResult(baseMap, curMap, diffMap, threshold, diffOutputPath, isBy)
+        val tMap = diffMap.diffThreshold(threshold)
+        val isError = tMap.any {
+            it.value == ResultDiffEnum.ExceededThreshold
+        }
+        return ApkResult(baseMap, curMap, diffMap, tMap, diffOutputPath, isError)
     }
 
     private fun analysis(path: Path): MutableMap<ApkFileType, IApkFormatInfo> {

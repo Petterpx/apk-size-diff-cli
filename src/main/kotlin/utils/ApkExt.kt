@@ -2,6 +2,7 @@ package utils
 
 import model.ApkFileType
 import model.IApkFormatInfo
+import model.ResultDiffEnum
 import model.Size
 import java.io.File
 import java.util.zip.ZipEntry
@@ -34,6 +35,17 @@ fun MutableMap<ApkFileType, IApkFormatInfo>.diff(curMap: MutableMap<ApkFileType,
         val base = this[it]?.size ?: Size()
         val target = curMap[it]?.size ?: Size()
         map[it] = target - base
+    }
+    return map
+}
+
+fun Map<ApkFileType, Size>.diffThreshold(tMap: Map<ApkFileType, Size>): Map<ApkFileType, ResultDiffEnum> {
+    val map = mutableMapOf<ApkFileType, ResultDiffEnum>().withDefault {
+        ResultDiffEnum.UnKnown
+    }
+    forEach {
+        val result = it.value.diffResult(tMap.getValue(it.key))
+        map[it.key] = result
     }
     return map
 }

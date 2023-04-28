@@ -1,11 +1,8 @@
 package result
 
 import model.ApkFileType
-import model.IApkFormatInfo
 import model.ResultDiffEnum
-import model.Size
 import utils.*
-import java.awt.Color
 import java.io.File
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -31,6 +28,7 @@ class ResultOutMd : ResultHelper() {
                     "Base Apk",
                     "Target Apk",
                     "Diff",
+                    "Status"
                 ),
                 addMdList(ApkFileType.APK),
                 addMdList(ApkFileType.DEX),
@@ -39,7 +37,9 @@ class ResultOutMd : ResultHelper() {
                 addMdList(ApkFileType.ARSC),
                 addMdList(ApkFileType.OTHER),
             )
-            if (result.isBeyondThreshold) builder.mdReference("本次扫描未通过，包大小超出限定阈值，请检查你的改动代码。")
+            if (result.isBeyondThreshold) {
+                builder.mdReference("本次扫描未通过，包大小超出限定阈值，请检查你的改动代码。\n")
+            }
             it.write(builder.toString().toByteArray())
         }
     }
@@ -49,7 +49,8 @@ class ResultOutMd : ResultHelper() {
             fileType.title,
             "${result.baseMap[fileType]?.size?.unit ?: 0}",
             "${result.curMap[fileType]?.size?.unit ?: 0}",
-            "${result.diffMap[fileType]?.unit ?: 0}".addText(null, true),
+            "${result.diffMap[fileType]?.unit ?: 0}".mdAddBold(true),
+            result.tMap.getValue(fileType).status
         )
     }
 }

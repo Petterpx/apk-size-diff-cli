@@ -82,3 +82,18 @@ java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/
 ![image-20230427231213976](https://img.tucang.cc/api/image/show/74bc6946e441f87f4b34cef76b399289)
 
 [](https://img.tucang.cc/api/image/show/74bc6946e441f87f4b34cef76b399289)
+
+
+
+#### Apk Size Diff Analysis 🧩
+
+| Metric | Base Apk  | Target Apk | Diff         | Status |
+| :------: | :---------: | :----------: | :------------: | :------: |
+| Apk    | 4.07 MB   | 5.08 MB    | **1.01 MB**  | ❌      |
+| Dex    | 7.68 MB   | 9.13 MB    | **1.45 MB**  | ---    |
+| Res    | 490.43 KB | 520.86 KB  | **30.44 KB** | ---    |
+| Lib    | 0         | 0          | **0**        | ---    |
+| Arsc   | 783.94 KB | 805.54 KB  | **21.6 KB**  | ---    |
+| Other  | 29.24 KB  | 28.62 KB   | **-0.61 KB** | 👏     |
+
+> 本次扫描未通过，包大小超出限定阈值，请检查你的改动代码。

@@ -29,6 +29,11 @@ fun String.addText(color: Color? = null, isBold: Boolean = false): String {
     return temp
 }
 
+fun String.mdAddBold(isBold: Boolean): String {
+    if (!isBold) return this
+    return "**$this**"
+}
+
 fun StringBuilder.mdParagraph(text: String) {
     append("$text\n\n")
 }
@@ -79,7 +84,7 @@ fun StringBuilder.mdTable(headers: List<String>, vararg rows: List<String>) {
     }
     append("|\n")
     headers.forEachIndexed { i, _ ->
-        append("| ${"-".repeat(maxLengths[i])} ")
+        append("| :${"-".repeat(maxLengths[i])}: ")
     }
     append("|\n")
 

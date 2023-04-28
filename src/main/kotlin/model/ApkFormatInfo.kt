@@ -1,11 +1,14 @@
 package model
 
+import com.github.ajalt.clikt.output.TermUi.echo
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 const val K = 1024L
 const val M = K * K
 const val DECIMAL = 2
+const val invalidThresholdSize = -99999999L
+val defaultThresholdSize = Size(invalidThresholdSize)
 
 @JvmInline
 value class Size(private val size: Long = 0L) {
@@ -23,18 +26,20 @@ value class Size(private val size: Long = 0L) {
 
     operator fun minus(other: Size): Size = Size(this.size - other.size)
 
-    fun beyondSize(base: Size?): ResultDiffEnum {
-        if (this.size < 0) return ResultDiffEnum.Decrease
-        if (base == null) return ResultDiffEnum.Keep
-        return if (this.size > base.size) {
-            ResultDiffEnum.Deterioration
+
+    fun diffResult(threshold: Size?): ResultDiffEnum {
+        if (this.size < 0L) return ResultDiffEnum.Decrease
+        if (this.size == 0L) return ResultDiffEnum.Keep
+        if (threshold == null || threshold.isInvalid()) return ResultDiffEnum.Growth
+        return if (this.size > threshold.size) {
+            ResultDiffEnum.ExceededThreshold
         } else {
-            ResultDiffEnum.Keep
+            ResultDiffEnum.Growth
         }
     }
 
+    private fun isInvalid() = size == invalidThresholdSize
 }
-
 
 sealed interface IApkFormatInfo {
     var size: Size
