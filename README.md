@@ -1,20 +1,22 @@
 # APK Size Diff CLI
 
-**APK Size Diff CLI** 是一个用于比较两个APK文件大小差异的cli，该工具可用于帮助你了解应用程序大小的变化情况，从而实现apk体积的监控。
+**APK Size Diff CLI** 是一个用于比较两个APK文件大小差异的cli，该工具可用于帮助你了解应用程序大小的变化情况，从而实现apk体积监控。
 
 ## 简单用法
 
 ```shell
-java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/
+java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/ -tss 102410
 ```
 
 > jar包下载地址请前往最新的[release版本](https://github.com/Petterpx/apk-size-diff-cli/releases)下载.
 
 **效果示例：**
 
-![image-20230427225219390](https://img.tucang.cc/api/image/show/a780194d5fedd5b54d2f165c8af9b03f)
+![image-20230428161644957](https://img.tucang.cc/api/image/show/34a16a5711a83e3158021078244a4286)
 
 最终会在给定的输出路径，生成一个名为 `apk_size_diff.md` 的文件。
+
+
 
 ## 配置选项
 
@@ -22,13 +24,16 @@ java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/
 
 ```shell
 Options:
+  -h, --help    
   -b, --baseline_apk PATH  Baseline Apk Path
   -c, --current_apk PATH   Current Apk Path
   -d, --diff_output PATH   Diff Output Path
   -t, --threshold TEXT     Apk threshold. Input example: apk:102400
   -ts, --thresholds TEXT   Apk threshold. Input example: apk:102400,res:102400
-  -h, --help               获得提示
+  -tss, --thresholdsBase INT  The basic threshold will be applied to all sub-levels.      
 ```
+
+
 
 ## 设置阈值
 
@@ -40,6 +45,12 @@ java ... -t apk:102400 -t res:102400
 
 // 方式2，以 xx:number,xx2:number 这种方式
 java ... -ts apk:102400,res:102400
+
+// 方式3，这种方式将默认所有分类都是同一种
+java ... -tss 102400
+
+- 优先级
+方式2>方式1>方式3，后者会覆盖前者(如果该类型存在)
 ```
 
 支持的阈值有：
@@ -60,9 +71,11 @@ java ... -ts apk:102400,res:102400
 java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/ -t apk:102400
 ```
 
+
+
 ## CI 联动
 
-当然更好的使用场景是，你可以在Github Action中使用该Cli，从而实现apk流水线体积监控。
+[当然更好的使用场景是](https://img.tucang.cc/api/image/show/86e197b78322cec6300e73780fb06b3a)，你可以在Github Action中使用该Cli，从而实现apk流水线体积监控。
 
 **示例如下：**
 
@@ -71,7 +84,7 @@ java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/
 - name: Run Diff apk size
   continue-on-error: true
   run: |
-    java -jar check/apk-size-diff-cli.jar -b $APK_PATH/android-base.apk -c $APK_PATH/android-new.apk -d $APK_DIFF_OUTPUT_PATH -ts apk:$KB500,lib:$KB500,res:$KB500,dex:$KB500,arsc:$KB500,other:$KB500
+    java -jar check/apk-size-diff-cli.jar -b $APK_PATH/android-base.apk -c $APK_PATH/android-new.apk -d $APK_DIFF_OUTPUT_PATH -tss $KB500
 
 - uses: marocchino/sticky-pull-request-comment@v2.6.2
   with:
@@ -79,21 +92,8 @@ java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/
     path: ${{ env.APK_DIFF_OUTPUT_PATH }}/apk_size_diff.md
 ```
 
-![image-20230427231213976](https://img.tucang.cc/api/image/show/74bc6946e441f87f4b34cef76b399289)
+![image-20230428162303488](https://img.tucang.cc/api/image/show/86e197b78322cec6300e73780fb06b3a)
 
-[](https://img.tucang.cc/api/image/show/74bc6946e441f87f4b34cef76b399289)
+## 需要更多功能
 
-
-
-#### Apk Size Diff Analysis 🧩
-
-| Metric | Base Apk  | Target Apk | Diff         | Status |
-| :------: | :---------: | :----------: | :------------: | :------: |
-| Apk    | 4.07 MB   | 5.08 MB    | **1.01 MB**  | ❌      |
-| Dex    | 7.68 MB   | 9.13 MB    | **1.45 MB**  | ---    |
-| Res    | 490.43 KB | 520.86 KB  | **30.44 KB** | ---    |
-| Lib    | 0         | 0          | **0**        | ---    |
-| Arsc   | 783.94 KB | 805.54 KB  | **21.6 KB**  | ---    |
-| Other  | 29.24 KB  | 28.62 KB   | **-0.61 KB** | 👏     |
-
-> 本次扫描未通过，包大小超出限定阈值，请检查你的改动代码。
+目前功能比较单一，如果需要更多支持，欢迎提 issues。
