@@ -16,7 +16,17 @@ java -jar apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/
 
 最终会在给定的输出路径，生成一个名为 `apk_size_diff.md` 的文件。
 
+## Tips
 
+当然你也可以使用 **exec** 可执行文件，从而免除 `java -jar` 命令。
+
+> 前往最新的 [release](https://github.com/Petterpx/apk-size-diff-cli/releases) 版本，下载 **apk-size-diff-cli.zip** 解压即可，路径 bin/apk-size-diff-cli
+
+**使用方式：**
+
+```shell
+apk_size_diff_cli -b test/base.apk -c test/current.apk -d test/result/ -tss 102410
+```
 
 ## 配置选项
 
