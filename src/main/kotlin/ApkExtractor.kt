@@ -36,7 +36,7 @@ class ApkExtractor private constructor() {
         var apkSize = 0L
         zipFile.stream().forEach { entry ->
             val fileType = entry.fileType()
-            apkSize += entry.compressedSize
+            apkSize += entry.size
             val apkFile = ApkFile(entry.name, fileType, Size(entry.size), Size(entry.compressedSize))
             val apkFormatInfo = map.getOrDefault(fileType, IApkFormatInfo.Basic(mutableListOf(), Size(), Size()))
             apkFormatInfo.addFile(apkFile)

@@ -1,6 +1,5 @@
 package model
 
-import com.github.ajalt.clikt.output.TermUi.echo
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -44,7 +43,7 @@ value class Size(private val size: Long = 0L) {
 sealed interface IApkFormatInfo {
     var size: Size
 
-    data class Apk(val name: String, override var size: Size, val compressSize: Size) : IApkFormatInfo
+    data class Apk(val name: String, override var size: Size, val originSize: Size) : IApkFormatInfo
     data class Basic(val child: MutableList<ApkFile>, override var size: Size, var compressSize: Size) : IApkFormatInfo
 
     fun addFile(file: ApkFile) {

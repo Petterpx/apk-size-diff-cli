@@ -21,17 +21,17 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
-      # https://github.com/burrunan/gradle-cache-action
+
       - uses: burrunan/gradle-cache-action@v1
         name: Cache gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build jar
-        run: ./gradlew jar
+      - name: Build distZip
+        run: ./gradlew distZip
 
       - uses: AButler/upload-release-assets@v2.0
         with:
-          files: build/libs/apk-size-diff-cli.jar
+          files: build/libs/apk-size-diff-cli.jar;build/distributions/apk-size-diff-cli.zip
           repo-token: ${{ github.token }}
           release-tag: ${{ github.event.release.tag_name}}
