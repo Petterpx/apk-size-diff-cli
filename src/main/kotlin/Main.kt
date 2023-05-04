@@ -1,10 +1,8 @@
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.*
-import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.clikt.parameters.types.long
 import com.github.ajalt.clikt.parameters.types.path
 import model.ApkFileType
-import model.IApkFormatInfo
 import model.Size
 import model.defaultThresholdSize
 import java.nio.file.Path
@@ -15,7 +13,7 @@ class Main() : CliktCommand(help = "This is Apk Size Diff Utils") {
     private val pattern = Regex("^\\w+:\\d+$")
 
     init {
-        versionOption("1.1")
+        versionOption("1.2")
     }
 
     private val baselineApkPath: Path by option(
